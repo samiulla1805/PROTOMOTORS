@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal | PROTO MOTORS Workshop Control</title>
+  <meta name="theme-color" content="#0b0b0e">
+
+  <!-- Google Fonts: Orbitron & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ==================== 1. LOGIN SCREEN ==================== -->
+  <section class="admin-login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">PROTO <span>MOTORS</span></div>
+      <div class="login-subtitle">WORKSHOP CONTROL DESK</div>
+
+      <form id="loginForm">
+        <div class="login-input-group">
+          <label class="login-label" for="adminPassword">MASTER ACCESS KEY</label>
+          <input type="password" id="adminPassword" class="login-input" placeholder="Enter workshop password..." required autocomplete="current-password">
+        </div>
+
+        <div id="loginError" style="display: none; color: var(--admin-red); font-size: 0.8rem; margin-bottom: 1rem; font-family: var(--font-heading);">
+          Invalid administrative password.
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          ⚡ UNLOCK CONTROL PORTAL
+        </button>
+
+        <div class="login-hint">
+          Default Workshop Key: <code>proto2026</code>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <a href="index.html" style="font-size: 0.775rem; color: var(--admin-text-sub); text-decoration: underline;">
+            ← Return to Customer Portal
+          </a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== 2. MAIN ADMIN APP ==================== -->
+  <div class="admin-app" id="adminApp">
+    <!-- Top Header Bar -->
+    <header class="admin-header">
+      <div class="admin-header-content">
+        <div class="admin-brand">
+          <a href="index.html" style="text-decoration: none;">
+            <div style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 900; color: #fff;">
+              PROTO <span style="color: var(--admin-red);">MOTORS</span>
+            </div>
+          </a>
+          <span class="admin-tag">WORKSHOP DESK</span>
+        </div>
+
+        <div class="admin-clock">
+          <span class="live-dot"></span>
+          <span>BAY TIME: <strong id="liveClock" style="color: #fff;">--:--:--</strong></span>
+        </div>
+
+        <div class="admin-actions">
+          <button type="button" class="btn btn-secondary btn-sm" id="refreshBtn">
+            🔄 Refresh
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="openNewBookingBtn">
+            + New Intake
+          </button>
+          <a href="index.html" target="_blank" class="btn btn-secondary btn-sm" title="View Customer Website">
+            🌐 Live Site
+          </a>
+          <button type="button" class="btn btn-outline-red btn-sm" id="logoutBtn">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="admin-container">
+      <!-- High Level Metrics -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon red">🏎️</div>
+          <div class="metric-data">
+            <h4>TOTAL VEHICLES</h4>
+            <div class="metric-number" id="metricTotal">0</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon orange">⚙️</div>
+          <div class="metric-data">
+            <h4>ACTIVE IN BAY</h4>
+            <div class="metric-number" id="metricActive">0</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon green">🏁</div>
+          <div class="metric-data">
+            <h4>READY FOR HANDOVER</h4>
+            <div class="metric-number" id="metricReady">0</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon blue">💰</div>
+          <div class="metric-data">
+            <h4>EST. WORKLOAD VALUE</h4>
+            <div class="metric-number" id="metricRevenue">₹0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter & Search Toolbar -->
+      <section class="admin-toolbar">
+        <div class="toolbar-row">
+          <div class="admin-search-wrap">
+            <span class="search-icon-inside">🔍</span>
+            <input type="text" id="adminSearchInput" class="admin-search-input" placeholder="Search by Job ID (e.g. PM-8821), customer name, phone, or vehicle...">
+          </div>
+
+          <!-- Vehicle Type Filter -->
+          <div class="filter-pills">
+            <button type="button" class="filter-btn type-filter-btn active" data-type="all">ALL CLASSES</button>
+            <button type="button" class="filter-btn type-filter-btn" data-type="2W">🏍️ 2-WHEELERS</button>
+            <button type="button" class="filter-btn type-filter-btn" data-type="4W">🏎️ 4-WHEELERS</button>
+          </div>
+        </div>
+
+        <div class="toolbar-row" style="border-top: 1px solid var(--admin-border); padding-top: 0.85rem;">
+          <div style="font-size: 0.725rem; font-family: var(--font-heading); color: var(--admin-text-dim);">FILTER STAGE:</div>
+          <div class="filter-pills">
+            <button type="button" class="filter-btn active" data-status="all">ALL STAGES</button>
+            <button type="button" class="filter-btn" data-status="Received">RECEIVED</button>
+            <button type="button" class="filter-btn" data-status="Inspection">INSPECTION</button>
+            <button type="button" class="filter-btn" data-status="In Progress">IN PROGRESS</button>
+            <button type="button" class="filter-btn" data-status="Quality Check">QUALITY CHECK</button>
+            <button type="button" class="filter-btn" data-status="Ready for Delivery">READY</button>
+            <button type="button" class="filter-btn" data-status="Delivered">DELIVERED</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vehicle Job Cards Grid -->
+      <section class="bookings-grid" id="bookingsContainer">
+        <!-- Rendered by admin.js -->
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== 3. WALK-IN INTAKE MODAL ==================== -->
+  <div class="modal-overlay" id="newBookingModal">
+    <div class="job-card-modal">
+      <button type="button" class="modal-close-btn" id="closeNewBookingBtn">&times;</button>
+      
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="badge badge-red">MANUAL WALK-IN</span>
+        <h3 style="font-size: 1.5rem; margin-top: 0.35rem;">NEW VEHICLE <span>INTAKE ENTRY</span></h3>
+      </div>
+
+      <form id="newBookingForm">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <label class="login-label">CUSTOMER NAME *</label>
+            <input type="text" id="newCustName" class="login-input" placeholder="e.g. Arjun Kapoor" required>
+          </div>
+
+          <div>
+            <label class="login-label">PHONE NUMBER (10-DIGIT) *</label>
+            <input type="tel" id="newPhone" class="login-input" placeholder="e.g. 9845012345" required pattern="[0-9]{10}">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="login-label">VEHICLE TYPE *</label>
+              <select id="newVehicleType" class="login-input" style="height: 44px;">
+                <option value="2W">🏍️ 2-Wheeler</option>
+                <option value="4W">🏎️ 4-Wheeler</option>
+              </select>
+            </div>
+            <div>
+              <label class="login-label">REGISTRATION / PLATE</label>
+              <input type="text" id="newPlate" class="login-input" placeholder="KA-01-XX-0000">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label class="login-label">MAKE / BRAND *</label>
+              <input type="text" id="newBrand" class="login-input" placeholder="e.g. Kawasaki / BMW" required>
+            </div>
+            <div>
+              <label class="login-label">MODEL *</label>
+              <input type="text" id="newModel" class="login-input" placeholder="e.g. Ninja 400 / M2" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="login-label">SERVICE PACKAGE *</label>
+            <input type="text" id="newPackage" class="login-input" placeholder="e.g. Track Tuning & Overhaul" required>
+          </div>
+
+          <div>
+            <label class="login-label">ESTIMATED BILL (₹)</label>
+            <input type="number" id="newPrice" class="login-input" placeholder="e.g. 8500" value="5000">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            ⚡ CREATE JOB ORDER &amp; ASSIGN ID
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/admin.js"></script>
+</body>
+</html>
